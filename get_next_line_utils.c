@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:54:09 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/06 13:29:04 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:31:53 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	char	*temp;
 	int		size;
 
-	size = BUFFER_SIZE * 2 + 1;
+	size = ft_strlen(s1) + ft_strlen(s2) + 1;
 	temp = (char *)malloc(sizeof(char) * size + 1);
 	if (!temp)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:32:42 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/06 14:05:43 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:23:38 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE < 1 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
-	printf("%s\n", next_line);
+	// printf("%s\n", next_line);
 	line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!line)
 		return (NULL);
@@ -43,27 +43,30 @@ char	*start_gnl(char *next_line, char *line, int fd)
 	while (eol_position(str) == -1 && no_n_end(&str, fd) == 1)
 	{
 	}
-	return (line_finish(str, &next_line));
+	return (line_finish(str, next_line));
 }
-char	*line_finish(char *str, char **next_line)
+char	*line_finish(char *str, char *next_line)
 {
 	int pos;
 	int i;
 
 	pos = eol_position(str) + 1;
 	i = 0;
-	while (str[pos] && i < BUFFER_SIZE)
+	while (str[pos])
 	{
-		if (pos == 0)
-			str[pos] = '\0';
 		if (str[pos])
 		{
-			next_line[0][i] = str[pos];
+			next_line[i] = str[pos];
 			str[pos] = '\0';
 		}
 		else
-			next_line[0][i] = '\0';
+			next_line[i] = '\0';
 		pos++;
+		i++;
+	}
+	while (i < BUFFER_SIZE)
+	{
+		next_line[i] = '\0';
 		i++;
 	}
 	return (str);
