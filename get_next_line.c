@@ -6,29 +6,26 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:32:42 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/06 11:34:21 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/06 14:05:43 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 char	*get_next_line(int fd)
 {
-	static char	*next_line = NULL;
+	static char	next_line[BUFFER_SIZE + 1] = "\0";
 	char		*line;
-	int			len;
 
 	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE < 1 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
-	line = ft_calloc(BUFFER_SIZE, sizeof(char));
-	if (!next_line)
+	printf("%s\n", next_line);
+	line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!line)
 		return (NULL);
-	if (read(fd, &line, BUFFER_SIZE) <= 0)
-		return (NULL);
-	if (line[0] == '\0')
+	if (read(fd, line, BUFFER_SIZE) <= 0)
 	{
-		free(next_line);
-		next_line = NULL;
 		free(line);
 		return (NULL);
 	}
@@ -40,7 +37,34 @@ char	*start_gnl(char *next_line, char *line, int fd)
 	char	*str;
 
 	str = ft_strjoin(next_line, line);
-	while (eol_position(str) == -1)
-		no_n_end(str, fd);
-	return (line_finish(str, next_line));
+	if (!str)
+		return (NULL);
+	free(line);
+	while (eol_position(str) == -1 && no_n_end(&str, fd) == 1)
+	{
+	}
+	return (line_finish(str, &next_line));
+}
+char	*line_finish(char *str, char **next_line)
+{
+	int pos;
+	int i;
+
+	pos = eol_position(str) + 1;
+	i = 0;
+	while (str[pos] && i < BUFFER_SIZE)
+	{
+		if (pos == 0)
+			str[pos] = '\0';
+		if (str[pos])
+		{
+			next_line[0][i] = str[pos];
+			str[pos] = '\0';
+		}
+		else
+			next_line[0][i] = '\0';
+		pos++;
+		i++;
+	}
+	return (str);
 }
