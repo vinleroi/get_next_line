@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 20:14:39 by aahadji           #+#    #+#             */
-/*   Updated: 2024/11/24 08:49:47 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/06 11:36:53 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,19 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10 
+#  define BUFFER_SIZE 10
 # endif
 
 # include <fcntl.h>
+# include <limits.h>
 # include <stdlib.h>
 # include <unistd.h>
 
-typedef struct s_list
-{
-	char			*str_buf;
-	struct s_list	*next;
-}				t_list;
-
-
 char	*get_next_line(int fd);
+char	*start_gnl(char *next_line, char *line, int fd);
+void	no_n_end(char *str, int fd);
 void	*ft_calloc(size_t count, size_t size);
-int	found_new_line(t_list *list);
-t_list	*ft_lstlast(t_list *lst);
-char	*ft_strcpy(char *dest, char *src);
-size_t	ft_strlen(const char *str);
-
-
+char	*line_finish(char *str, char *next_line);
+char	*ft_strjoin(const char *s1, const char *s2);
+int		eol_position(char *line);
 #endif

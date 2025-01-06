@@ -9,7 +9,7 @@ char	*get_next_line(int fd);
 int	main(void)
 {
 	int fd = open("test", O_RDONLY);
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 7; ++i)
 	{
 		printf("===========\n");
 		printf("%s", get_next_line(fd));
