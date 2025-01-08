@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 20:14:39 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/06 15:19:52 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/08 18:11:36 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,5 @@ char	*line_finish(char *str, char *next_line);
 char	*ft_strjoin(const char *s1, const char *s2);
 size_t	ft_strlen(const char *str);
 int		eol_position(char *line);
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 #endif

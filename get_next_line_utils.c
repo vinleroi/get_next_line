@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:54:09 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/06 15:31:53 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/08 18:50:44 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,44 +32,33 @@ void	*ft_calloc(size_t count, size_t size)
 	}
 	return ((void *)temp);
 }
+
 size_t	ft_strlen(const char *str)
 {
 	size_t	i;
 
 	i = 0;
 	while (str[i])
-	{
 		i++;
-	}
 	return (i);
 }
 
 char	*ft_strjoin(const char *s1, const char *s2)
 {
 	int		i;
-	int		j;
-	char	*temp;
-	int		size;
+	char	*result;
 
-	size = ft_strlen(s1) + ft_strlen(s2) + 1;
-	temp = (char *)malloc(sizeof(char) * size + 1);
-	if (!temp)
+	result = ft_calloc((ft_strlen(s1) + ft_strlen(s2) + 1), sizeof(char));
+	if (!result)
 		return (NULL);
 	i = 0;
-	while (s1[i])
-	{
-		temp[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (s2[j])
-	{
-		temp[i] = s2[j];
-		i++;
-		j++;
-	}
-	temp[i] = '\0';
-	return (temp);
+	i = 0;
+	while (*s1)
+		result[i++] = *s1++;
+	while (*s2)
+		result[i++] = *s2++;
+	result[i] = '\0';
+	return (result);
 }
 
 int	no_n_end(char **str, int fd)
@@ -97,8 +86,10 @@ int	no_n_end(char **str, int fd)
 
 int	eol_position(char *line)
 {
-	int i;
+	int	i;
 
+	if (!line)
+		return (-2);
 	i = 0;
 	while (line[i])
 	{
