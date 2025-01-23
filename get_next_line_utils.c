@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:54:09 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/08 18:50:44 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/23 19:38:37 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	return (result);
 }
 
-int	no_n_end(char **str, int fd)
+int	no_n_end(char **str, int *fd)
 {
 	char	*temp;
 	char	*new_str;
@@ -70,15 +70,19 @@ int	no_n_end(char **str, int fd)
 	temp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!temp)
 		return (0);
-	bytes_read = read(fd, temp, BUFFER_SIZE);
+	bytes_read = read(*fd, temp, BUFFER_SIZE);
 	if (bytes_read <= 0)
 	{
 		free(temp);
 		return (0);
 	}
-	temp[bytes_read] = '\0';
 	new_str = ft_strjoin(*str, temp);
 	free(*str);
+	if (!new_str)
+	{
+		free(temp);
+		return (0);
+	}
 	*str = new_str;
 	free(temp);
 	return (1);
@@ -89,13 +93,17 @@ int	eol_position(char *line)
 	int	i;
 
 	if (!line)
-		return (-2);
+		return (-1);
 	i = 0;
 	while (line[i])
 	{
 		if (line[i] == '\n')
+		{
 			return (i);
+		}
 		i++;
 	}
+	if (line[i] == '\0')
+		return (-2);
 	return (-1);
 }

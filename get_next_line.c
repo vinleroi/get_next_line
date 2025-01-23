@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:32:42 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/08 18:51:08 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/23 19:38:56 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,16 @@ char	*get_next_line(int fd)
 	line = ft_calloc(BUFFER_SIZE + 2, sizeof(char));
 	if (!line)
 		return (NULL);
-	if (read(fd, line, BUFFER_SIZE) <= 0)
+	if (read(fd, line, BUFFER_SIZE) <= 0 && next_line[0] == '\0')
 	{
 		free(line);
 		return (NULL);
 	}
-	temp = start_gnl(next_line, line, fd);
+	temp = start_gnl(next_line, line, &fd);
 	return (temp);
 }
 
-char	*start_gnl(char *next_line, char *line, int fd)
+char	*start_gnl(char *next_line, char *line, int *fd)
 {
 	char	*str;
 
@@ -46,7 +46,6 @@ char	*start_gnl(char *next_line, char *line, int fd)
 			continue ;
 		else
 		{
-			next_line = NULL;
 			free(str);
 			return (NULL);
 		}
@@ -57,21 +56,24 @@ char	*start_gnl(char *next_line, char *line, int fd)
 char	*line_finish(char *str, char *next_line)
 {
 	int		pos;
-	int		i;
 	char	*line;
+	int		i;
 
 	pos = eol_position(str);
+	i = 0;
 	if (pos == -1)
-	{
-		ft_strlcpy(next_line, "", BUFFER_SIZE * 2 + 2);
-		return (str);
-	}
+		return (NULL);
+	else if (pos == -2)
+		return (free(str), endof_file(next_line));
 	line = ft_calloc(pos + 2, sizeof(char));
 	if (!line)
-		return (NULL);
+		return (free(str), NULL);
 	ft_strlcpy(line, str, pos + 2);
-	i = 0;
-	i = ft_strlcpy(next_line, str + pos + 1, BUFFER_SIZE * 2 + 2);
+	while (str[pos + 1 + i])
+	{
+		next_line[i] = str[pos + 1 + i];
+		i++;
+	}
 	next_line[i] = '\0';
 	free(str);
 	return (line);
@@ -92,26 +94,51 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	dst[i] = '\0';
 	return (ft_strlen(src));
 }
-/*#include <stdio.h>
 
-int	main(void)
+char	*endof_file(char *next_line)
 {
-	int fd = open("test", O_RDONLY);
-	if (fd == -1)
+	int		pos;
+	char	*line;
+	int		i;
+
+	pos = eol_position(next_line);
+	if (pos >= 0)
 	{
-		perror("Error opening file");
-		return (1);
+		line = ft_calloc(pos + 2, sizeof(char));
+		if (!line)
+			return (NULL);
+		ft_strlcpy(line, next_line, pos + 2);
+		i = 0;
+		while (next_line[pos + 1 + i])
+		{
+			next_line[i] = next_line[pos + 1 + i];
+			i++;
+		}
+		next_line[i] = '\0';
+		return (line);
 	}
-	for (int i = 0; i < 18; ++i)
-	{
-	}
-	char *temp;
-	while ((temp = get_next_line(fd)))
-	{
-		printf("===========\n");
-		printf("%s", temp);
-		free(temp);
-	}
-	close(fd);
-	return (0);
-}*/
+	return (NULL);
+}
+// int	main(void)
+// {
+// 	int fd = open("test", O_RDONLY);
+// 	if (fd == -1)
+// 	{
+// 		perror("Error opening file");
+// 		return (1);
+// 	}
+// 	char *temp;
+// 	int i = 0;
+// 	int j = 0;
+// 	while ((temp = get_next_line(fd)))
+// 	{
+// 		j = ft_strlen(temp);
+// 		printf("ligne : %i ===========\n", i);
+// 		printf("%s \n", temp);
+// 		printf("there was  %i  letters ===========\n \n", j);
+// 		free(temp);
+// 		i++;
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
