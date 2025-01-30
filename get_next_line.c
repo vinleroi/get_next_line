@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:32:42 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/23 19:38:56 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/30 17:45:10 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 char	*get_next_line(int fd)
 {
-	static char	next_line[BUFFER_SIZE * 2 + 2] = "\0";
+	static char	next_line[BUFFER_SIZE * 2 + 1] = "\0";
 	char		*line;
 	char		*temp;
 
 	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE < 1 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
-	line = ft_calloc(BUFFER_SIZE + 2, sizeof(char));
+	line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!line)
 		return (NULL);
 	if (read(fd, line, BUFFER_SIZE) <= 0 && next_line[0] == '\0')
@@ -40,15 +40,10 @@ char	*start_gnl(char *next_line, char *line, int *fd)
 	if (!str)
 		return (NULL);
 	free(line);
-	while (eol_position(str) == -1)
+	if (no_n_end(&str, fd) != 1)
 	{
-		if (no_n_end(&str, fd) == 1)
-			continue ;
-		else
-		{
-			free(str);
-			return (NULL);
-		}
+		free(str);
+		return (NULL);
 	}
 	return (line_finish(str, next_line));
 }
@@ -69,7 +64,7 @@ char	*line_finish(char *str, char *next_line)
 	if (!line)
 		return (free(str), NULL);
 	ft_strlcpy(line, str, pos + 2);
-	while (str[pos + 1 + i])
+	while ((pos + 1 + i) <= (BUFFER_SIZE * 2) && str[pos + 1 + i])
 	{
 		next_line[i] = str[pos + 1 + i];
 		i++;
@@ -121,7 +116,7 @@ char	*endof_file(char *next_line)
 }
 // int	main(void)
 // {
-// 	int fd = open("test", O_RDONLY);
+// 	int fd = open("test2", O_RDONLY);
 // 	if (fd == -1)
 // 	{
 // 		perror("Error opening file");

@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:54:09 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/23 19:38:37 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/26 14:33:02 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,18 @@ int	no_n_end(char **str, int *fd)
 	temp = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!temp)
 		return (0);
-	bytes_read = read(*fd, temp, BUFFER_SIZE);
-	if (bytes_read <= 0)
+	while (eol_position(*str) == -1)
 	{
-		free(temp);
-		return (0);
+		bytes_read = read(*fd, temp, BUFFER_SIZE);
+		if (bytes_read <= 0)
+			return (free(temp), 0);
+		temp[bytes_read] = '\0';
+		new_str = ft_strjoin(*str, temp);
+		if (!new_str)
+			return (free(temp), 0);
+		free(*str);
+		*str = new_str;
 	}
-	new_str = ft_strjoin(*str, temp);
-	free(*str);
-	if (!new_str)
-	{
-		free(temp);
-		return (0);
-	}
-	*str = new_str;
 	free(temp);
 	return (1);
 }
@@ -103,7 +101,5 @@ int	eol_position(char *line)
 		}
 		i++;
 	}
-	if (line[i] == '\0')
-		return (-2);
 	return (-1);
 }
