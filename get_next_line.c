@@ -6,113 +6,94 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 03:32:42 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/30 17:45:10 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/31 18:11:46 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+static void	update_nl(char *nl)
+{
+	size_t	r;
+	size_t	w;
+
+	r = 0;
+	while (nl[r] && nl[r] != '\n')
+		++r;
+	if (nl[r])
+		++r;
+	w = 0;
+	while (nl[r])
+		nl[w++] = nl[r++];
+	while (nl[w])
+		nl[w++] = '\0';
+}
+
+static char	*gnfree(char *dest)
+{
+	free(dest);
+	return (NULL);
+}
+
+static char	*gnl_copy(char *src, long fd, char *buffer)
+{
+	char	*dest;
+	size_t	len;
+	long	ret;
+
+	ret = 1;
+	len = gnlen(src);
+	dest = ft_calloc(sizeof(char), len + 1);
+	if (!dest)
+		return (NULL);
+	ft_strcpy(dest, src, len);
+	update_nl(src);
+	while (dest && dest[len - 1] != '\n' && ret > 0)
+	{
+		ret = read(fd, buffer, BUFFER_SIZE);
+		if (ret > 0)
+		{
+			ft_strcpy(src, buffer, ret);
+			dest = gnl_join(dest, src);
+			update_nl(src);
+			len = gnlen(dest);
+		}
+		else if (ret < 0)
+			return (gnfree(dest));
+	}
+	return (dest);
+}
+
 char	*get_next_line(int fd)
 {
-	static char	next_line[BUFFER_SIZE * 2 + 1] = "\0";
-	char		*line;
-	char		*temp;
+	static char	nl[BUFFER_SIZE + 1] = "\0";
+	char		buffer[BUFFER_SIZE];
+	long		ret;
 
 	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE < 1 || BUFFER_SIZE >= INT_MAX)
 		return (NULL);
-	line = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!line)
-		return (NULL);
-	if (read(fd, line, BUFFER_SIZE) <= 0 && next_line[0] == '\0')
+	if (nl[0] == '\0')
 	{
-		free(line);
-		return (NULL);
+		ret = read(fd, buffer, BUFFER_SIZE);
+		if (ret < 1)
+			return (NULL);
+		ft_strcpy(nl, buffer, ret);
 	}
-	temp = start_gnl(next_line, line, &fd);
-	return (temp);
+	return (gnl_copy(nl, fd, buffer));
 }
 
-char	*start_gnl(char *next_line, char *line, int *fd)
-{
-	char	*str;
-
-	str = ft_strjoin(next_line, line);
-	if (!str)
-		return (NULL);
-	free(line);
-	if (no_n_end(&str, fd) != 1)
-	{
-		free(str);
-		return (NULL);
-	}
-	return (line_finish(str, next_line));
-}
-
-char	*line_finish(char *str, char *next_line)
-{
-	int		pos;
-	char	*line;
-	int		i;
-
-	pos = eol_position(str);
-	i = 0;
-	if (pos == -1)
-		return (NULL);
-	else if (pos == -2)
-		return (free(str), endof_file(next_line));
-	line = ft_calloc(pos + 2, sizeof(char));
-	if (!line)
-		return (free(str), NULL);
-	ft_strlcpy(line, str, pos + 2);
-	while ((pos + 1 + i) <= (BUFFER_SIZE * 2) && str[pos + 1 + i])
-	{
-		next_line[i] = str[pos + 1 + i];
-		i++;
-	}
-	next_line[i] = '\0';
-	free(str);
-	return (line);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+size_t	gnlen(const char *str)
 {
 	size_t	i;
 
 	i = 0;
-	if (dstsize == 0)
-		return (ft_strlen(src));
-	while (src[i] && i < (dstsize - 1))
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (ft_strlen(src));
-}
-
-char	*endof_file(char *next_line)
-{
-	int		pos;
-	char	*line;
-	int		i;
-
-	pos = eol_position(next_line);
-	if (pos >= 0)
-	{
-		line = ft_calloc(pos + 2, sizeof(char));
-		if (!line)
-			return (NULL);
-		ft_strlcpy(line, next_line, pos + 2);
-		i = 0;
-		while (next_line[pos + 1 + i])
-		{
-			next_line[i] = next_line[pos + 1 + i];
-			i++;
-		}
-		next_line[i] = '\0';
-		return (line);
-	}
-	return (NULL);
+	if (!str)
+		return (0);
+	while (str[i] && str[i] != '\n')
+		++i;
+	if (str[i] == '\n')
+		++i;
+	return (i);
 }
 // int	main(void)
 // {

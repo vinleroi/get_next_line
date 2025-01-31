@@ -6,7 +6,7 @@
 /*   By: aahadji <aahadji@student.s19.be>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 20:14:39 by aahadji           #+#    #+#             */
-/*   Updated: 2025/01/23 19:26:59 by aahadji          ###   ########.fr       */
+/*   Updated: 2025/01/31 18:01:35 by aahadji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,19 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 10
+# elif BUFFER_SIZE < 0
+#  undef BUFFER_SIZE
+#  define BUFFER_SIZE 0
 # endif
 
-# include <fcntl.h>
 # include <limits.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 
 char	*get_next_line(int fd);
-char	*start_gnl(char *next_line, char *line, int *fd);
-int		no_n_end(char **str, int *fd);
-void	*ft_calloc(size_t count, size_t size);
-char	*line_finish(char *str, char *next_line);
-char	*ft_strjoin(const char *s1, const char *s2);
-size_t	ft_strlen(const char *str);
-int		eol_position(char *line);
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
-char	*endof_file(char *next_line);
+char	*ft_calloc(size_t size, size_t count);
+void	ft_strcpy(char *dest, char *src, int len);
+size_t	gnlen(const char *str);
+char	*gnl_join(char *s1, char *s2);
+
 #endif
